@@ -4,3 +4,9 @@
 *.jar
 *.war
 *.ear
+
+# Eclipse-related files
+.metadata
+FlumeLib/.settings
+FlumeLib/.classpath
+FlumeLib/.project
