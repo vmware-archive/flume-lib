@@ -5,8 +5,10 @@
 *.war
 *.ear
 
-# Eclipse-related files
+# Eclipse and Maven related files
 .metadata
 FlumeLib/.settings
 FlumeLib/.classpath
 FlumeLib/.project
+FlumeLib/target
+FlumeLib/dependency-reduced-pom.xml
