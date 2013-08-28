@@ -8,6 +8,7 @@ import org.apache.flume.source.AbstractSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import twitter4j.FilterQuery;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.auth.OAuthAuthorization;
@@ -26,6 +27,7 @@ public class TwitterSampleStreamSource extends AbstractSource implements
 	private String authUrl;
 	private String accessTokenUrl;
 	private String requestTokenUrl;
+	private String[] filter = null;
 
 	private TwitterStream stream = null;;
 
@@ -43,6 +45,9 @@ public class TwitterSampleStreamSource extends AbstractSource implements
 				"https://api.twitter.com/oauth/authorize");
 		requestTokenUrl = context.getString("request.token.url",
 				"https://api.twitter.com/oauth/access_token");
+		String strFilter = context.getString("filter.by", null);
+
+		filter = (strFilter != null) ? strFilter.split(",") : null;
 
 		// Log the properties
 		LOG.info("Properties: {}", context.getParameters());
@@ -58,8 +63,15 @@ public class TwitterSampleStreamSource extends AbstractSource implements
 		// Add a new listener to the stream
 		stream.addListener(new TwitterEventChannelListener(channel));
 
-		LOG.info("Starting Twitter sample stream...");
-		stream.sample();
+		if (filter == null) {
+			LOG.info("Starting Twitter sample stream...");
+			stream.sample();
+		} else {
+			LOG.info("Starting Twitter filtering on {}", (Object[]) filter);
+			FilterQuery query = new FilterQuery();
+			query.track(filter);
+			stream.filter(query);
+		}
 
 		super.start();
 	}
